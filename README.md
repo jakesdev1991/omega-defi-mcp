@@ -1,84 +1,85 @@
-# Omega Protocol: Cross-Chain DeFi Intelligence MCP Server
+# Omega Protocol: Unified Cross-Chain DeFi Intelligence & Developer Suite
 
 [![smithery badge](https://smithery.ai/badge/omega-mcp-server)](https://smithery.ai/server/omega-mcp-server)
 
-The Omega MCP Server is a high-performance cross-chain DeFi intelligence API designed natively for AI trading agents. It provides real-time, sub-slot pricing data and advanced arbitrage routing across Solana, Ethereum, Arbitrum, and Cosmos ecosystems.
+The Omega MCP Suite is a high-performance cross-chain DeFi intelligence and agentic tool suite designed natively for AI agents. It provides sub-slot pricing, spread detection, risk analytics, and robust memory bridges across Solana, Ethereum, Arbitrum, and Cosmos ecosystems.
 
-## Features for AI Agents
+---
 
-* **Live Cross-Venue Spreads**: Monitor instantaneous price dislocations between major DEXs (Raydium, Orca, Uniswap, KyberSwap) natively in your AI workflows.
-* **Cross-Chain Multi-Hop Routing**: Automatically discover complex bridging routes (e.g., SOL -> ARB -> ETH) that maximize yield using our proprietary advanced routing models.
-* **Market Regime Analysis**: Equip your trading agent with live volatility and liquidity shift forecasting, enabling it to pause trading during market shocks.
+## 🛠️ The Suite Structure
 
-> Note: This repository contains the public client wrapper to connect your AI agents (Claude Desktop, Cursor, AutoGPT) to the hosted Omega Protocol backend.
+This repository contains both the client-facing hosted API wrappers and the local sandbox developer tools:
 
-## Quick Start (Docker)
+### 1. Omega Client (`omega-client`)
+Connects to our high-frequency hosted backend for live spreads, regime metrics, and multi-hop route discoveries.
+- **Key Tools:** `get_live_spreads`, `get_cross_chain_routes`, `get_market_regime`
 
-The fastest and most secure way to run the Omega MCP Server is via Docker.
+### 2. Omega Arbitrage Elite (`omega-arbitrage`)
+High-velocity Solana arbitrage simulator.
+- **Key Tools:** `run_elite_arbitrage_cycle`
 
-1. Ensure you have Docker installed.
-2. Get your `OMEGA_API_KEY` from the Omega Dashboard (or use the Free Tier key).
-3. Run the container:
+### 3. Omega Analytics Pro (`omega-analytics`)
+Sovereign financial risk audits and payment verification on Base L2.
+- **Key Tools:** `omega_stability_audit`, `chaos_injection_tunnel`, `verify_onchain_payment`
+
+### 4. Omega Memory Bridge (`omega-memory`)
+Unified substrate for agentic Long-Term Memory (LTM).
+- **Key Tools:** `store_memory`, `query_past_decisions`
+
+### 5. Sovereign Gateway Proxy (`omega-proxy`)
+Provides dynamic semantic tool discovery and gateway invocation.
+- **Key Tools:** `discover_omega_tools`, `invoke_omega_suite`
+
+---
+
+## 🚀 Installation & Setup
+
+Install the package and all its executable scripts directly in editable mode:
 
 ```bash
-docker run -i --rm -e OMEGA_API_KEY="your_api_key_here" ghcr.io/omegaprotocol/omega-mcp:latest
+git clone https://github.com/jakesdev1991/omega-defi-mcp.git
+cd omega-defi-mcp
+pip install -e .
 ```
 
-## Manual Installation
+---
 
-If you prefer to run the proxy client directly in Python:
+## 🔗 Connection Guides
 
-```bash
-git clone https://github.com/omegaprotocol/omega-mcp-public.git
-cd omega-mcp-public
-pip install -r requirements.txt
-
-export OMEGA_API_KEY="your_api_key_here"
-fastmcp run src/server.py
-```
-
-## Claude Desktop Configuration
-
-To give Claude Desktop immediate access to live cross-chain data, add the following to your `claude_desktop_config.json`:
+### 1. Claude Desktop Configuration
+To register these servers in Claude Desktop, append them to your `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "omega-defi-intelligence": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "OMEGA_API_KEY=your_api_key_here",
-        "ghcr.io/omegaprotocol/omega-mcp:latest"
-      ]
+    "omega-client": {
+      "command": "omega-client",
+      "env": {
+        "OMEGA_API_KEY": "your_api_key_here",
+        "OMEGA_API_URL": "https://api.omegaprotocol.io/v1"
+      }
+    },
+    "omega-memory": {
+      "command": "omega-memory",
+      "env": {
+        "OMEGA_QDRANT_STORAGE": "./qdrant_storage"
+      }
+    },
+    "omega-analytics": {
+      "command": "omega-analytics",
+      "env": {
+        "OMEGA_REVENUE_WALLET": "0x53460A8C9E4574931a98075306917E96985C1C83"
+      }
     }
   }
 }
 ```
 
-## Available Tools
-
-The MCP Server exposes the following tools directly to your LLM context:
-
-* `get_live_spreads(chain, min_margin_bps)`: Find immediate arbitrage opportunities on a single chain.
-* `get_cross_chain_routes(token_in, amount_usd)`: Map a multi-bridge arbitrage path.
-* `get_market_regime(chain)`: Analyze current volatility states to adjust risk profiles.
-* `check_api_status()`: Check connection status and your current subscription tier.
-
-## Monetization Tiers
-
-* **Free**: Delayed pricing data, chain analytics, and regime statuses.
-* **Signal**: Real-time cross-chain spreads, liquidity depth metrics.
-* **Premium**: Predictive routing pipelines and maximum API rate limits.
-
 ---
 
 ## 🌐 Web Dashboard (Cloudflare Pages)
 
-We have built a premium, responsive Web Dashboard showcasing the live shredstream feeds, RCOD market regime alerts, and the multi-hop routing optimizer.
+We have built a premium, responsive Web Dashboard showcasing the live spreads, RCOD market regime alerts, and the multi-hop routing optimizer.
 
 The source code for the dashboard is located in the [website/](file:///home/jake/Downloads/training/omega-defi-mcp/website/) directory.
 
@@ -99,3 +100,5 @@ Since the website is completely serverless and built with standard HTML5, CSS3, 
    ```
 4. Follow the terminal prompt to create your new project. Cloudflare will provide you with a permanent public `.pages.dev` URL!
 
+---
+*Powered by Agent Omega. Engineered for autonomous agency.*
