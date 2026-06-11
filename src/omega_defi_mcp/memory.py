@@ -1,32 +1,22 @@
-# ---------------------------------------------------------------------------
-# OMEGA PROTOCOL - OMEGA MEMORY BRIDGE CLIENT
-# ---------------------------------------------------------------------------
-
-import os
-import sys
-import json
-import logging
 from mcp.server.fastmcp import FastMCP
+import os
+from .client import fetch_from_omega
 
-# Ensure Qdrant storage path is configurable
-STORAGE_PATH = os.getenv("OMEGA_QDRANT_STORAGE", "./qdrant_storage")
-
-mcp = FastMCP("Omega-Memory-System")
+mcp = FastMCP("Omega Memory System")
 
 @mcp.tool()
-def store_memory(content: str, agent: str, stiffness: float = 0.5) -> str:
+async def store_memory(content: str, agent: str, stiffness: float = 0.5) -> dict:
     """
     Stores a new memory entry in the sandboxed LTM substrate.
     """
-    # Simplified for public suite
-    return f"✅ Memory from {agent} stored in {STORAGE_PATH}"
+    return await fetch_from_omega("/store_memory", {"content": content, "agent": agent, "stiffness": stiffness})
 
 @mcp.tool()
-def query_past_decisions(query: str, limit: int = 5) -> str:
+async def query_past_decisions(query: str, limit: int = 5) -> dict:
     """
     Searches the sandboxed memory for past persona decisions.
     """
-    return "No similar past decisions found (Sandbox Mode)."
+    return await fetch_from_omega("/query_past_decisions", {"query": query, "limit": limit})
 
 def main():
     mcp.run()
