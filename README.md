@@ -73,3 +73,29 @@ The MCP Server exposes the following tools directly to your LLM context:
 * **Free**: Delayed pricing data, chain analytics, and regime statuses.
 * **Signal**: Real-time cross-chain spreads, liquidity depth metrics.
 * **Premium**: Predictive routing pipelines and maximum API rate limits.
+
+---
+
+## 🌐 Web Dashboard (Cloudflare Pages)
+
+We have built a premium, responsive Web Dashboard showcasing the live shredstream feeds, RCOD market regime alerts, and the multi-hop routing optimizer.
+
+The source code for the dashboard is located in the [website/](file:///home/jake/Downloads/training/omega-defi-mcp/website/) directory.
+
+### Quick Deployment to Cloudflare Pages:
+Since the website is completely serverless and built with standard HTML5, CSS3, and JavaScript, it can be deployed to Cloudflare Pages with zero build configuration:
+
+1. Install the Wrangler CLI (if not already installed):
+   ```bash
+   npm install -g wrangler
+   ```
+2. Log in to your Cloudflare account:
+   ```bash
+   wrangler login
+   ```
+3. Deploy the `website` directory:
+   ```bash
+   wrangler pages deploy website --project-name=omega-defi-mcp
+   ```
+4. Follow the terminal prompt to create your new project. Cloudflare will provide you with a permanent public `.pages.dev` URL!
+

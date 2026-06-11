@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omega Protocol — AI-Native Cross-Chain DeFi Intelligence</title>
+  <meta name="description" content="Sub-slot latency cross-chain DeFi pricing, spread detection, and advanced arbitrage route discovery built natively for AI agents.">
+  
+  <!-- SEO & Social Meta -->
+  <meta property="og:title" content="Omega Protocol — AI-Native Cross-Chain DeFi Intelligence">
+  <meta property="og:description" content="Real-time multi-hop routing, live spread matrices, and RCOD market regime signals for automated trading agents.">
+  <meta property="og:type" content="website">
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Custom Style -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <!-- Background Glow FX -->
+  <div class="glow-bg">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+  </div>
+
+  <!-- Animated Node Canvas -->
+  <canvas id="node-canvas"></canvas>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-wrapper">
+          <i data-lucide="zap" class="logo-icon"></i>
+        </div>
+        <div class="brand-text">
+          <h1>OMEGA PROTOCOL</h1>
+          <p class="subtitle"><span class="status-indicator live"></span> LIVE SHREDSTREAM FEED &bull; 17 CHAINS &bull; 26 DEXs</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="connect-wallet-btn" class="btn btn-secondary">
+          <i data-lucide="wallet" class="btn-icon"></i>
+          <span id="wallet-btn-text">Connect Web3 Wallet</span>
+        </button>
+        <button id="get-api-key-btn" class="btn btn-primary" disabled>
+          <i data-lucide="key" class="btn-icon"></i>
+          <span>Generate API Key</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- NETWORK RUNTIME GRID (17 CHAINS) -->
+    <section class="card mb-6" id="network-status-section">
+      <div class="card-header">
+        <div class="card-title">
+          <i data-lucide="globe" class="title-icon text-cyan"></i>
+          <h2>Cross-Chain Core Registry status</h2>
+        </div>
+        <span class="badge badge-emerald">17/17 Chains Online</span>
+      </div>
+      <div class="network-grid" id="network-grid">
+        <!-- Generated dynamically in app.js -->
+      </div>
+    </section>
+
+    <!-- METRICS GRID -->
+    <div class="dashboard-grid">
+      
+      <!-- SPREADS PANEL -->
+      <section class="card span-2" id="spreads-section">
+        <div class="card-header">
+          <div class="card-title">
+            <i data-lucide="trending-up" class="title-icon text-emerald"></i>
+            <h2>Live Cross-Venue Spreads</h2>
+          </div>
+          <div class="api-endpoint">
+            <code>get_live_spreads()</code>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <table id="spreads-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Asset</th>
+                <th>Buy Venue</th>
+                <th>Sell Venue</th>
+                <th class="text-right">Spread (bps)</th>
+              </tr>
+            </thead>
+            <tbody id="spreads-tbody">
+              <tr class="table-placeholder">
+                <td colspan="5">Connecting wallet required to authorize data stream...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="blur-overlay" id="spreads-overlay">
+          <div class="overlay-content">
+            <i data-lucide="lock" class="lock-icon"></i>
+            <h3>Data Stream Locked</h3>
+            <p>Connect your wallet to access sub-slot arbitrage spreads from our reconstructed AMM reserves.</p>
+            <button class="btn btn-primary trigger-wallet-connect">Connect Wallet</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- REGIME & STATUS -->
+      <div class="sidebar-col">
+        
+        <!-- RCOD REGIME CARD -->
+        <section class="card text-center" id="regime-card">
+          <div class="card-header justify-center">
+            <div class="card-title">
+              <i data-lucide="activity" class="title-icon text-cyan"></i>
+              <h2>RCOD Market Regime</h2>
+            </div>
+          </div>
+          <div class="regime-display">
+            <div class="regime-value" id="rcod-regime-value">INITIALIZING</div>
+            <div class="dissonance-meter">
+              <div class="dissonance-fill" id="dissonance-fill" style="width: 0%"></div>
+            </div>
+            <div class="dissonance-label">
+              <span>Swarm Dissonance:</span>
+              <span id="dissonance-val" class="font-mono">0.000000</span>
+            </div>
+          </div>
+          <div class="regime-desc" id="rcod-regime-desc">
+            Synchronizing with global rate-of-change oscillators...
+          </div>
+        </section>
+
+        <!-- LIVE TERMINAL LOGS -->
+        <section class="card console-card" id="console-section">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="terminal" class="title-icon text-slate"></i>
+              <h2>Engine Telemetry Logs</h2>
+            </div>
+          </div>
+          <div class="console-body" id="console-logs">
+            <div class="log-line system">Initializing telemetry connection...</div>
+            <div class="log-line system">Waiting for handshake...</div>
+          </div>
+        </section>
+      </div>
+
+    </div>
+
+    <!-- MAIN ROUTING SECTION -->
+    <div class="dashboard-grid mt-6">
+      
+      <!-- ROUTING SANDBOX -->
+      <section class="card span-2" id="routing-sandbox">
+        <div class="card-header">
+          <div class="card-title">
+            <i data-lucide="git-branch" class="title-icon text-indigo"></i>
+            <h2>Multi-Hop Cross-Chain Pathfinding</h2>
+          </div>
+          <div class="api-endpoint">
+            <code>get_cross_chain_routes()</code>
+          </div>
+        </div>
+        
+        <div class="routing-container">
+          <div class="routing-form">
+            <div class="form-group">
+              <label for="route-input">Input Asset</label>
+              <select id="route-input" class="form-control">
+                <option value="SOL">SOL (Solana)</option>
+                <option value="USDC">USDC (Multi-Chain)</option>
+                <option value="ETH">ETH (Ethereum)</option>
+                <option value="ATOM">ATOM (Cosmos)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="route-amount">Input Amount (USD)</label>
+              <input type="number" id="route-amount" class="form-control" value="1000" min="100">
+            </div>
+            <div class="form-group">
+              <label for="route-target">Output Asset</label>
+              <select id="route-target" class="form-control">
+                <option value="SOL">SOL (Solana)</option>
+                <option value="USDC" selected>USDC (Multi-Chain)</option>
+                <option value="ETH">ETH (Ethereum)</option>
+                <option value="ATOM">ATOM (Cosmos)</option>
+              </select>
+            </div>
+            <button id="calculate-route-btn" class="btn btn-primary btn-block">
+              <i data-lucide="navigation" class="btn-icon"></i>
+              <span>Find Optimal Path</span>
+            </button>
+          </div>
+
+          <div class="routing-visualizer">
+            <div class="vis-placeholder" id="vis-placeholder">
+              <i data-lucide="split" class="large-icon"></i>
+              <p>Configure assets and click "Find Optimal Path" to run the route optimizer simulation.</p>
+            </div>
+            
+            <div class="vis-flow hidden" id="vis-flow">
+              <div class="flow-step font-mono">
+                <div class="step-num">1</div>
+                <div class="step-details">
+                  <span class="step-asset">SOL</span>
+                  <span class="step-venue">Raydium DEX</span>
+                  <i data-lucide="arrow-right" class="arrow-icon"></i>
+                  <span class="step-asset">USDC (Solana)</span>
+                </div>
+                <div class="step-cost text-red">-4.2 bps (Slippage)</div>
+              </div>
+              <div class="flow-connector"></div>
+              <div class="flow-step font-mono">
+                <div class="step-num">2</div>
+                <div class="step-details">
+                  <span class="step-asset">USDC</span>
+                  <span class="step-venue text-indigo font-bold">deBridge Bridge</span>
+                  <i data-lucide="arrow-right" class="arrow-icon"></i>
+                  <span class="step-asset">USDC (Arbitrum)</span>
+                </div>
+                <div class="step-cost text-red">-1.5 bps (Bridge Fee)</div>
+              </div>
+              <div class="flow-connector"></div>
+              <div class="flow-step font-mono">
+                <div class="step-num">3</div>
+                <div class="step-details">
+                  <span class="step-asset">USDC</span>
+                  <span class="step-venue">Camelot DEX</span>
+                  <i data-lucide="arrow-right" class="arrow-icon"></i>
+                  <span class="step-asset">WETH</span>
+                </div>
+                <div class="step-cost text-red">-3.0 bps (Fee)</div>
+              </div>
+              <div class="flow-connector"></div>
+              <div class="flow-step font-mono">
+                <div class="step-num">4</div>
+                <div class="step-details">
+                  <span class="step-asset">WETH</span>
+                  <span class="step-venue text-indigo font-bold">Across Protocol</span>
+                  <i data-lucide="arrow-right" class="arrow-icon"></i>
+                  <span class="step-asset">SOL (Solana)</span>
+                </div>
+                <div class="step-cost text-emerald font-bold">+28.5 bps (Spread Premium)</div>
+              </div>
+              
+              <div class="flow-summary">
+                <div class="summary-metric">
+                  <span class="lbl">Route Viability Index:</span>
+                  <span class="val text-emerald" id="residual-confidence">0.984105</span>
+                </div>
+                <div class="summary-metric">
+                  <span class="lbl">Estimated Latency:</span>
+                  <span class="val" id="route-latency">4.2 seconds</span>
+                </div>
+                <div class="summary-metric highlight">
+                  <span class="lbl">Net Yield:</span>
+                  <span class="val text-emerald" id="net-yield">+19.8 bps</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- API INTERACTIVE PLAYGROUND -->
+      <section class="card" id="api-playground">
+        <div class="card-header">
+          <div class="card-title">
+            <i data-lucide="play" class="title-icon text-cyan"></i>
+            <h2>API Playground</h2>
+          </div>
+        </div>
+        <div class="playground-body">
+          <div class="form-group">
+            <label for="api-select">API Endpoint</label>
+            <select id="api-select" class="form-control">
+              <option value="/spreads">GET /spreads</option>
+              <option value="/routes">GET /routes</option>
+              <option value="/regime">GET /regime</option>
+              <option value="/status">GET /status</option>
+            </select>
+          </div>
+          <button id="send-request-btn" class="btn btn-secondary btn-block mt-3">
+            <i data-lucide="send" class="btn-icon"></i>
+            <span>Send Request</span>
+          </button>
+          
+          <div class="json-output-wrapper mt-4">
+            <div class="json-header">
+              <span>Response Output</span>
+              <span id="response-status" class="badge">idle</span>
+            </div>
+            <pre class="json-output"><code id="json-code-box">{ "status": "Ready. Connect wallet to call." }</code></pre>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- QUICKSTART -->
+    <section class="card mt-6" id="quickstart">
+      <div class="card-header">
+        <div class="card-title">
+          <i data-lucide="book-open" class="title-icon text-emerald"></i>
+          <h2>Developer Integration Quickstart</h2>
+        </div>
+      </div>
+      
+      <div class="quickstart-tabs">
+        <button class="tab-btn active" data-tab="tab-docker">Docker (Recommended)</button>
+        <button class="tab-btn" data-tab="tab-python">Python (Manual)</button>
+        <button class="tab-btn" data-tab="tab-claude">Claude Desktop Config</button>
+      </div>
+
+      <div class="quickstart-content">
+        <div id="tab-docker" class="tab-pane active">
+          <p>Spin up the proxy client locally in one command. It tunnels directly to our high-frequency hosted data backend.</p>
+          <pre><code>docker run -e OMEGA_API_KEY="your_api_key_here" -p 8000:8000 ghcr.io/omegaprotocol/omega-mcp:latest</code></pre>
+        </div>
+        <div id="tab-python" class="tab-pane">
+          <p>Clone the public repository directly and run using Python's <code>fastmcp</code> runner.</p>
+          <pre><code>git clone https://github.com/jakesdev1991/omega-defi-mcp.git
+cd omega-defi-mcp
+pip install -r requirements.txt
+
+export OMEGA_API_KEY="your_api_key_here"
+fastmcp run src/server.py</code></pre>
+        </div>
+        <div id="tab-claude" class="tab-pane">
+          <p>To hook up Claude Desktop to retrieve live cross-chain spreads instantly, append this to your <code>claude_desktop_config.json</code>:</p>
+          <pre><code>{
+  "mcpServers": {
+    "omega-defi-intelligence": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "OMEGA_API_KEY=your_api_key_here",
+        "ghcr.io/omegaprotocol/omega-mcp:latest"
+      ]
+    }
+  }
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <p>&copy; 2026 Omega Protocol. Engineered for autonomous agency. Powered by high-performance architecture.</p>
+      <div class="footer-links">
+        <a href="https://github.com/jakesdev1991/omega-defi-mcp" target="_blank">
+          <i data-lucide="github"></i> GitHub Repo
+        </a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- PREMIUM WALLET MODAL -->
+  <div class="modal-backdrop hidden" id="wallet-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Link Wallet to Retrieve Keys</h3>
+        <button class="close-modal" id="close-modal-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">Exposing derived prices and pathfinding matrices requires linking an authorized Web3 identity.</p>
+        <div class="wallet-list">
+          <div class="wallet-option" data-wallet="phantom">
+            <div class="wallet-icon-wrapper phantom-color">
+              <i data-lucide="ghost"></i>
+            </div>
+            <div class="wallet-info">
+              <h4>Phantom Wallet</h4>
+              <p>Solana Native</p>
+            </div>
+            <i data-lucide="chevron-right" class="chevron"></i>
+          </div>
+          <div class="wallet-option" data-wallet="solflare">
+            <div class="wallet-icon-wrapper solflare-color">
+              <i data-lucide="flame"></i>
+            </div>
+            <div class="wallet-info">
+              <h4>Solflare</h4>
+              <p>Advanced Solana Client</p>
+            </div>
+            <i data-lucide="chevron-right" class="chevron"></i>
+          </div>
+          <div class="wallet-option" data-wallet="metamask">
+            <div class="wallet-icon-wrapper metamask-color">
+              <i data-lucide="compass"></i>
+            </div>
+            <div class="wallet-info">
+              <h4>MetaMask</h4>
+              <p>EVM Ecosystem</p>
+            </div>
+            <i data-lucide="chevron-right" class="chevron"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
