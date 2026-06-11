@@ -332,7 +332,7 @@ function startTelemetryFeed() {
   }, 3000);
 }
 
-// --- WALLET MODAL HANDLERS ---
+// ---// --- INTERACTIVE WALLET CONNECTION ---
 function openWalletModal() {
   if (walletConnected) return;
   walletModal.classList.remove("hidden");
@@ -342,9 +342,68 @@ function closeWalletModal() {
   walletModal.classList.add("hidden");
 }
 
-function connectWallet(walletType) {
+async function connectWallet(walletType) {
   closeWalletModal();
-  addLogLine(`Initiating signature request via ${walletType}...`, "system");
+  addLogLine(`Requesting connection via browser extension (${walletType})...`, "system");
+  connectWalletBtn.disabled = true;
+  walletBtnText.textContent = "Verifying...";
+  
+  try {
+    let address = "";
+    if (walletType === "phantom") {
+      if (typeof window.solana !== "undefined" && window.solana.isPhantom) {
+        const resp = await window.solana.connect();
+        address = resp.publicKey.toString();
+      } else {
+        throw new Error("Phantom extension not detected in this browser.");
+      }
+    } else if (walletType === "solflare") {
+      if (typeof window.solflare !== "undefined") {
+        await window.solflare.connect();
+        address = window.solflare.publicKey.toString();
+      } else {
+        throw new Error("Solflare extension not detected in this browser.");
+      }
+    } else if (walletType === "metamask") {
+      if (typeof window.ethereum !== "undefined") {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        address = accounts[0];
+      } else {
+        throw new Error("MetaMask extension not detected in this browser.");
+      }
+    }
+    
+    // Success State
+    walletConnected = true;
+    connectWalletBtn.disabled = false;
+    connectWalletBtn.className = "btn btn-secondary";
+    
+    const displayAddr = `${address.slice(0, 4)}...${address.slice(-4)}`;
+    walletBtnText.textContent = `Linked: ${displayAddr}`;
+    getApiKeyBtn.removeAttribute("disabled");
+    
+    // Unlock spreads stream
+    spreadsOverlay.classList.add("hidden");
+    generateLiveSpreads();
+    spreadsInterval = setInterval(generateLiveSpreads, 4000);
+    
+    addLogLine(`Identity verification successful via ${walletType}. Address: ${address}`, "success");
+    addLogLine("Free tier live metrics stream authorized.", "success");
+    
+  } catch (err) {
+    addLogLine(`Wallet connection failed: ${err.message}`, "warning");
+    connectWalletBtn.disabled = false;
+    walletBtnText.textContent = "Connect Web3 Wallet";
+    
+    const useSim = confirm(`${err.message}\n\nWould you like to run in simulation mode instead?`);
+    if (useSim) {
+      runSimulatedConnection(walletType);
+    }
+  }
+}
+
+function runSimulatedConnection(walletType) {
+  addLogLine(`Running simulated connection for ${walletType}...`, "system");
   connectWalletBtn.disabled = true;
   walletBtnText.textContent = "Verifying...";
   
@@ -357,14 +416,13 @@ function connectWallet(walletType) {
     walletBtnText.textContent = `Linked: ${displayAddr}`;
     getApiKeyBtn.removeAttribute("disabled");
     
-    // Unlock spreads stream
     spreadsOverlay.classList.add("hidden");
     generateLiveSpreads();
     spreadsInterval = setInterval(generateLiveSpreads, 4000);
     
-    addLogLine(`Identity verification successful via ${walletType}. Address: ${displayAddr}`, "success");
+    addLogLine(`Identity verification successful (Simulation). Address: ${displayAddr}`, "success");
     addLogLine("Free tier live metrics stream authorized.", "success");
-  }, 1200);
+  }, 1000);
 }
 
 // --- GENERATE MOCK API KEY ---
