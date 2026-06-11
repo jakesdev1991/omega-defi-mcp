@@ -64,6 +64,10 @@ async def check_api_status() -> dict:
     return await fetch_from_omega("/status")
 
 
-if __name__ == "__main__":
+def main():
     # Runs standard stdio transport for Claude Desktop / Cursor
     mcp.run()
+
+
+if __name__ == "__main__":
+    main()

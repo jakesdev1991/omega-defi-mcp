@@ -1,0 +1,27 @@
+[project]
+name = "omega-defi-mcp"
+version = "0.2.0"
+description = "Unified public MCP server suite and dashboard for the Omega Protocol: DeFi pricing, Arbitrage, Analytics, and Memory."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp[cli]>=1.0.0",
+    "fastmcp>=0.1.0",
+    "numpy>=1.24.0",
+    "requests>=2.31.0",
+    "solana>=0.30.0",
+    "solders>=0.18.0",
+    "qdrant-client>=1.7.0",
+    "httpx>=0.25.0"
+]
+
+[project.scripts]
+omega-client = "omega_defi_mcp.client:main"
+omega-arbitrage = "omega_defi_mcp.arbitrage:main"
+omega-analytics = "omega_defi_mcp.analytics:main"
+omega-memory = "omega_defi_mcp.memory:main"
+omega-proxy = "omega_defi_mcp.proxy:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
