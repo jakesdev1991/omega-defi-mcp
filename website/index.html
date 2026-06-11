@@ -47,6 +47,13 @@
           <p class="subtitle"><span class="status-indicator live"></span> LIVE SHREDSTREAM FEED &bull; 17 CHAINS &bull; 26 DEXs</p>
         </div>
       </div>
+      
+      <!-- Bankroll tracker for human customers -->
+      <div class="bankroll-tracker">
+        <span class="bankroll-label">Total Realized Profit:</span>
+        <span class="bankroll-value" id="header-bankroll">$46.50</span>
+      </div>
+
       <div class="actions">
         <button id="connect-wallet-btn" class="btn btn-secondary">
           <i data-lucide="wallet" class="btn-icon"></i>
@@ -59,14 +66,50 @@
       </div>
     </header>
 
+    <!-- METRICS GLANCE (4 CARDS) -->
+    <div class="metrics-glance-grid mb-6">
+      <div class="metric-card">
+        <div class="metric-card-header">
+          <span>Success Rate</span>
+          <i data-lucide="shield-check" class="metric-icon text-emerald"></i>
+        </div>
+        <div class="metric-value font-mono">98.42%</div>
+        <div class="metric-trend text-emerald"><i data-lucide="trending-up"></i> +0.12% past 24h</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-card-header">
+          <span>Telemetry Throughput</span>
+          <i data-lucide="zap" class="metric-icon text-cyan"></i>
+        </div>
+        <div class="metric-value font-mono" id="shreds-throughput">5,241 S/s</div>
+        <div class="metric-trend text-cyan">Active Shredstream Link</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-card-header">
+          <span>Transactions Audited</span>
+          <i data-lucide="bar-chart-2" class="metric-icon text-indigo"></i>
+        </div>
+        <div class="metric-value font-mono" id="txs-audited">142,392</div>
+        <div class="metric-trend text-indigo">Multi-Chain Sync active</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-card-header">
+          <span>LTM Memory Base</span>
+          <i data-lucide="database" class="metric-icon text-amber"></i>
+        </div>
+        <div class="metric-value font-mono">24,192 recs</div>
+        <div class="metric-trend text-amber">Qdrant Node sync'd</div>
+      </div>
+    </div>
+
     <!-- NETWORK RUNTIME GRID (17 CHAINS) -->
     <section class="card mb-6" id="network-status-section">
       <div class="card-header">
         <div class="card-title">
           <i data-lucide="globe" class="title-icon text-cyan"></i>
-          <h2>Cross-Chain Core Registry status</h2>
+          <h2>Cross-Chain Core Registry Status</h2>
         </div>
-        <span class="badge badge-emerald">17/17 Chains Online</span>
+        <span class="badge badge-emerald" id="chains-online-badge">17/17 Chains Online</span>
       </div>
       <div class="network-grid" id="network-grid">
         <!-- Generated dynamically in app.js -->
@@ -160,6 +203,54 @@
 
     </div>
 
+    <!-- PRICING TIERS SECTION FOR CUSTOMERS -->
+    <section class="mt-6" id="pricing-plans-section">
+      <div class="section-header text-center mb-6">
+        <h2 class="text-white text-2xl font-bold">API Service Subscription Tiers</h2>
+        <p class="text-slate-400 mt-2">Unlock professional multi-hop pathfinding and low-latency arbitrage alerts.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card" id="card-tier-free">
+          <div class="pricing-badge">Free</div>
+          <h3>Developer</h3>
+          <div class="price">$0 <span>/ mo</span></div>
+          <p class="pricing-desc">Basic market metrics for testing sandbox integrations.</p>
+          <ul class="pricing-features">
+            <li><i data-lucide="check" class="text-emerald"></i> Delayed regime signals</li>
+            <li><i data-lucide="check" class="text-emerald"></i> Basic token quotes</li>
+            <li><i data-lucide="check" class="text-emerald"></i> 100 API calls / hour</li>
+          </ul>
+          <button class="btn btn-secondary btn-block mt-4 select-tier-btn" data-tier="free">Current Active Tier</button>
+        </div>
+        <div class="pricing-card featured" id="card-tier-signal">
+          <div class="pricing-badge featured-badge">Popular</div>
+          <h3>Signal Pro</h3>
+          <div class="price">$99 <span>/ mo</span></div>
+          <p class="pricing-desc">Real-time indicators and spreads reconstructed at slot speed.</p>
+          <ul class="pricing-features">
+            <li><i data-lucide="check" class="text-emerald"></i> Real-time RCOD dissonance</li>
+            <li><i data-lucide="check" class="text-emerald"></i> Reconstructed AMM spreads</li>
+            <li><i data-lucide="check" class="text-emerald"></i> Qdrant memory query bridge</li>
+            <li><i data-lucide="check" class="text-emerald"></i> 1,000 API calls / hour</li>
+          </ul>
+          <button class="btn btn-primary btn-block mt-4 select-tier-btn" data-tier="signal">Upgrade to Pro</button>
+        </div>
+        <div class="pricing-card" id="card-tier-premium">
+          <div class="pricing-badge">Enterprise</div>
+          <h3>Alpha Premium</h3>
+          <div class="price">$499 <span>/ mo</span></div>
+          <p class="pricing-desc">Advanced multi-hop routing paths and predictive analytics.</p>
+          <ul class="pricing-features">
+            <li><i data-lucide="check" class="text-emerald"></i> Multi-hop route discovery</li>
+            <li><i data-lucide="check" class="text-emerald"></i> Route viability indexing</li>
+            <li><i data-lucide="check" class="text-emerald"></i> Chaos simulation tunnel</li>
+            <li><i data-lucide="check" class="text-emerald"></i> 10,000 API calls / hour</li>
+          </ul>
+          <button class="btn btn-secondary btn-block mt-4 select-tier-btn" data-tier="premium">Upgrade to Premium</button>
+        </div>
+      </div>
+    </section>
+
     <!-- MAIN ROUTING SECTION -->
     <div class="dashboard-grid mt-6">
       
@@ -208,7 +299,7 @@
           <div class="routing-visualizer">
             <div class="vis-placeholder" id="vis-placeholder">
               <i data-lucide="split" class="large-icon"></i>
-              <p>Configure assets and click "Find Optimal Path" to run the route optimizer simulation.</p>
+              <p>Configure assets and click "Find Optimal Path" to run C-Core physics batch solver simulation.</p>
             </div>
             
             <div class="vis-flow hidden" id="vis-flow">
@@ -273,6 +364,16 @@
             </div>
           </div>
         </div>
+        
+        <!-- Premium Gate Overlay for Routing -->
+        <div class="blur-overlay" id="routing-overlay">
+          <div class="overlay-content">
+            <i data-lucide="lock" class="lock-icon" style="color: var(--indigo); filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));"></i>
+            <h3>Multi-Hop Routing Locked</h3>
+            <p>Accessing multi-hop cross-chain optimization matrices requires an **Alpha Premium** tier subscription.</p>
+            <button class="btn btn-primary upgrade-premium-trigger">Unlock Premium Pathfinding</button>
+          </div>
+        </div>
       </section>
 
       <!-- API INTERACTIVE PLAYGROUND -->
@@ -288,9 +389,10 @@
             <label for="api-select">API Endpoint</label>
             <select id="api-select" class="form-control">
               <option value="/spreads">GET /spreads</option>
-              <option value="/routes">GET /routes</option>
+              <option value="/routes" id="opt-playground-routes" disabled>GET /routes (Premium)</option>
               <option value="/regime">GET /regime</option>
               <option value="/status">GET /status</option>
+              <option value="/memory">GET /memory</option>
             </select>
           </div>
           <button id="send-request-btn" class="btn btn-secondary btn-block mt-3">
@@ -334,25 +436,20 @@
           <p>Clone the public repository directly and run using Python's <code>fastmcp</code> runner.</p>
           <pre><code>git clone https://github.com/jakesdev1991/omega-defi-mcp.git
 cd omega-defi-mcp
-pip install -r requirements.txt
+pip install -e .
 
 export OMEGA_API_KEY="your_api_key_here"
-fastmcp run src/server.py</code></pre>
+omega-client</code></pre>
         </div>
         <div id="tab-claude" class="tab-pane">
           <p>To hook up Claude Desktop to retrieve live cross-chain spreads instantly, append this to your <code>claude_desktop_config.json</code>:</p>
           <pre><code>{
   "mcpServers": {
-    "omega-defi-intelligence": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "OMEGA_API_KEY=your_api_key_here",
-        "ghcr.io/omegaprotocol/omega-mcp:latest"
-      ]
+    "omega-client": {
+      "command": "omega-client",
+      "env": {
+        "OMEGA_API_KEY": "your_api_key_here"
+      }
     }
   }
 }</code></pre>
@@ -377,7 +474,7 @@ fastmcp run src/server.py</code></pre>
     <div class="modal">
       <div class="modal-header">
         <h3>Link Wallet to Retrieve Keys</h3>
-        <button class="close-modal" id="close-modal-btn">&times;</button>
+        <button class="close-modal text-slate" id="close-modal-btn">&times;</button>
       </div>
       <div class="modal-body">
         <p class="modal-description">Exposing derived prices and pathfinding matrices requires linking an authorized Web3 identity.</p>
@@ -412,6 +509,52 @@ fastmcp run src/server.py</code></pre>
             </div>
             <i data-lucide="chevron-right" class="chevron"></i>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L2 BASE CHECKOUT MODAL -->
+  <div class="modal-backdrop hidden" id="checkout-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="checkout-title">Upgrade Subscription Tier</h3>
+        <button class="close-modal" id="close-checkout-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="checkout-summary mb-4">
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400">Selected Plan:</span>
+            <span class="text-white font-bold" id="checkout-plan-name">Signal Pro</span>
+          </div>
+          <div class="flex justify-between pt-2">
+            <span class="text-slate-400">Amount Due:</span>
+            <span class="text-emerald font-bold" id="checkout-plan-price">$99.00 USDC / mo</span>
+          </div>
+        </div>
+        
+        <p class="modal-description">Transactions are settled securely on the **Base L2** network. Send the payment to the official wallet below:</p>
+        
+        <div class="payment-box font-mono mb-4">
+          <div class="addr-row">
+            <span class="lbl">Wallet Address:</span>
+            <span class="val" id="checkout-dest-wallet">0x53460A8C9E...5C1C83</span>
+            <button class="copy-addr-btn" id="copy-wallet-btn"><i data-lucide="copy"></i></button>
+          </div>
+          <div class="addr-row mt-2">
+            <span class="lbl">L2 Network:</span>
+            <span class="val text-indigo">Base Network</span>
+          </div>
+        </div>
+        
+        <div class="form-group mb-4">
+          <label for="tx-hash-input">Verify Transaction Hash</label>
+          <input type="text" id="tx-hash-input" class="form-control font-mono" placeholder="0xabc123... (L2 TX hash)">
+        </div>
+
+        <div class="flex gap-3">
+          <button id="simulate-payment-btn" class="btn btn-secondary flex-1">Simulate Payment</button>
+          <button id="verify-payment-btn" class="btn btn-primary flex-1">Verify payment</button>
         </div>
       </div>
     </div>

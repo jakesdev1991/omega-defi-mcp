@@ -4,9 +4,15 @@ lucide.createIcons();
 // State Variables
 let walletConnected = false;
 let apiKeyGenerated = false;
+let currentTier = "free"; // free, signal, premium
+let realizedProfit = 46.50;
+let txsAudited = 142392;
+
 let spreadsInterval = null;
 let regimeInterval = null;
 let logsInterval = null;
+let profitInterval = null;
+let throughputInterval = null;
 
 const tokens = ["SOL", "USDC", "RAY", "BONK", "JUP", "ORCA", "WIF"];
 const DEXs = ["Raydium", "Orca", "Meteora", "Phoenix", "OpenBook"];
@@ -60,10 +66,27 @@ const routeTarget = document.getElementById("route-target");
 const routeAmount = document.getElementById("route-amount");
 const networkGrid = document.getElementById("network-grid");
 
-// Modal Elements
+// New Dynamic Elements
+const headerBankroll = document.getElementById("header-bankroll");
+const shredsThroughput = document.getElementById("shreds-throughput");
+const txsAuditedEl = document.getElementById("txs-audited");
+const routingOverlay = document.getElementById("routing-overlay");
+const optPlaygroundRoutes = document.getElementById("opt-playground-routes");
+const chainsOnlineBadge = document.getElementById("chains-online-badge");
+
+// Modals
 const walletModal = document.getElementById("wallet-modal");
 const closeModalBtn = document.getElementById("close-modal-btn");
 const walletOptions = document.querySelectorAll(".wallet-option");
+
+const checkoutModal = document.getElementById("checkout-modal");
+const closeCheckoutBtn = document.getElementById("close-checkout-btn");
+const checkoutPlanName = document.getElementById("checkout-plan-name");
+const checkoutPlanPrice = document.getElementById("checkout-plan-price");
+const txHashInput = document.getElementById("tx-hash-input");
+const simulatePaymentBtn = document.getElementById("simulate-payment-btn");
+const verifyPaymentBtn = document.getElementById("verify-payment-btn");
+const copyWalletBtn = document.getElementById("copy-wallet-btn");
 
 // Playground Elements
 const apiSelect = document.getElementById("api-select");
@@ -98,7 +121,7 @@ class Particle {
   draw() {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(16, 185, 129, 0.4)";
+    ctx.fillStyle = "rgba(16, 185, 129, 0.35)";
     ctx.fill();
   }
 }
@@ -116,7 +139,6 @@ function initCanvas() {
 function animateCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  // Connect lines
   for (let i = 0; i < particles.length; i++) {
     particles[i].update();
     particles[i].draw();
@@ -146,7 +168,7 @@ function renderNetworkRegistry() {
     const item = document.createElement("div");
     item.className = "network-item";
     
-    const latency = Math.floor(Math.random() * 45) + 38; // 38ms to 83ms pings
+    const latency = Math.floor(Math.random() * 45) + 38;
     
     item.innerHTML = `
       <div class="ping-indicator"></div>
@@ -173,6 +195,28 @@ function startNetworkPings() {
   }, 2000);
 }
 
+// --- TELEMETRY CLOCK RUNNERS ---
+function startTelemetryClock() {
+  // 1. Shreds throughput fluctuations
+  throughputInterval = setInterval(() => {
+    const baseThroughput = 5200;
+    const diff = Math.floor(Math.random() * 140) - 70;
+    shredsThroughput.textContent = `${(baseThroughput + diff).toLocaleString()} S/s`;
+  }, 1000);
+
+  // 2. Realized profit ticking upwards
+  profitInterval = setInterval(() => {
+    // Arbitrary micro-yield ticker to show activity
+    const inc = (Math.random() * 0.04).toFixed(4);
+    realizedProfit += parseFloat(inc);
+    headerBankroll.textContent = `$${realizedProfit.toFixed(4)}`;
+    
+    // Transactions audited increments
+    txsAudited += Math.random() > 0.6 ? 1 : 0;
+    txsAuditedEl.textContent = txsAudited.toLocaleString();
+  }, 1800);
+}
+
 // --- UTILITY: Log Telemetry ---
 function addLogLine(text, type = "system") {
   const timestamp = new Date().toISOString().split("T")[1].slice(0, -1);
@@ -182,7 +226,6 @@ function addLogLine(text, type = "system") {
   consoleLogs.appendChild(line);
   consoleLogs.scrollTop = consoleLogs.scrollHeight;
   
-  // Prune old logs
   while (consoleLogs.children.length > 25) {
     consoleLogs.removeChild(consoleLogs.firstChild);
   }
@@ -202,7 +245,7 @@ function generateLiveSpreads() {
     }
     
     const base = basePrices[asset];
-    const diff = (Math.random() * 0.004) * base; // max 0.4% diff
+    const diff = (Math.random() * 0.004) * base;
     const priceA = base - (Math.random() * 0.5 * diff);
     const priceB = priceA + diff;
     const bps = ((priceB - priceA) / priceA * 10000).toFixed(1);
@@ -217,10 +260,7 @@ function generateLiveSpreads() {
     });
   }
   
-  // Sort by highest spread
   rows.sort((a, b) => b.bps - a.bps);
-  
-  // Update table
   spreadsTbody.innerHTML = "";
   const timestamp = new Date().toLocaleTimeString("en-US", { hour12: false });
   
@@ -246,7 +286,7 @@ function generateLiveSpreads() {
 
 // --- SIMULATED DATA GENERATOR: REGIME ---
 function updateRegime() {
-  const dissonance = Math.random() * 0.12; // 0 to 0.12
+  const dissonance = Math.random() * 0.12;
   dissonanceFill.style.width = `${(dissonance / 0.12) * 100}%`;
   dissonanceVal.textContent = dissonance.toFixed(6);
   
@@ -283,7 +323,7 @@ function startTelemetryFeed() {
       () => addLogLine(`Memory mapped register validation successful.`),
       () => {
         if (walletConnected) {
-          addLogLine(`MCP API Server request from public client. Authorized tier: FREE.`, "success");
+          addLogLine(`MCP API Server request from client. Authorized tier: ${currentTier.toUpperCase()}.`, "success");
         }
       }
     ];
@@ -292,7 +332,7 @@ function startTelemetryFeed() {
   }, 3000);
 }
 
-// --- INTERACTIVE WALLET CONNECTION ---
+// --- WALLET MODAL HANDLERS ---
 function openWalletModal() {
   if (walletConnected) return;
   walletModal.classList.remove("hidden");
@@ -337,7 +377,7 @@ function generateApiKey() {
   setTimeout(() => {
     apiKeyGenerated = true;
     const randomHex = Array.from({length: 24}, () => Math.floor(Math.random()*16).toString(16)).join("");
-    const key = `omega_free_${randomHex}`;
+    const key = `omega_${currentTier}_${randomHex}`;
     
     getApiKeyBtn.className = "btn btn-secondary";
     getApiKeyBtn.innerHTML = `
@@ -347,7 +387,7 @@ function generateApiKey() {
     lucide.createIcons();
     
     addLogLine(`API Key generated and stored: ${key}`, "success");
-    alert(`Successfully generated API Key for FREE tier:\n\n${key}\n\nAdd this to your environment as OMEGA_API_KEY to authenticate tools.`);
+    alert(`Successfully generated API Key for ${currentTier.toUpperCase()} tier:\n\n${key}\n\nAdd this to your environment as OMEGA_API_KEY to authenticate tools.`);
   }, 1000);
 }
 
@@ -367,32 +407,28 @@ function runPathfinder() {
   visPlaceholder.classList.add("hidden");
   visFlow.classList.add("hidden");
   
-  // Loading state
   const loader = document.createElement("div");
   loader.className = "vis-placeholder";
   loader.id = "vis-loader";
   loader.innerHTML = `
     <i data-lucide="loader-2" class="large-icon animate-spin"></i>
-    <p>Evaluating multi-hop route matrices & pre-flighting bridge routes...</p>
+    <p>Solving multi-hop route matrices & pre-flighting bridge routes...</p>
   `;
   visPlaceholder.parentNode.appendChild(loader);
   lucide.createIcons();
   
   setTimeout(() => {
-    // Remove loader
     const l = document.getElementById("vis-loader");
     if (l) l.remove();
     
     calculateRouteBtn.disabled = false;
     visFlow.classList.remove("hidden");
     
-    // Customize flow endpoints based on selection
     const steps = visFlow.getElementsByClassName("flow-step");
     steps[0].querySelector(".step-asset:first-child").textContent = inAsset;
     steps[3].querySelector(".step-asset:last-child").textContent = outAsset;
     
-    // Simulate yields based on amount
-    const pct = (0.15 + Math.random() * 0.15).toFixed(4); // 0.15% to 0.30%
+    const pct = (0.15 + Math.random() * 0.15).toFixed(4);
     const residual = (0.95 + Math.random() * 0.049).toFixed(6);
     const latency = (3 + Math.random() * 2.5).toFixed(1);
     
@@ -400,8 +436,88 @@ function runPathfinder() {
     document.getElementById("route-latency").textContent = `${latency} seconds`;
     document.getElementById("net-yield").textContent = `+${(pct * 100).toFixed(1)} bps`;
     
-    addLogLine(`Optimized route discovered. Yield: +${(pct * 100).toFixed(1)} bps | Confidence: ${residual}`, "success");
+    addLogLine(`Optimized route discovered. Yield: +${(pct * 100).toFixed(1)} bps | Viability index: ${residual}`, "success");
   }, 1500);
+}
+
+// --- SUBSCRIPTION CHECKOUT HANDLERS ---
+let selectedCheckoutPlan = "signal";
+
+function openCheckoutModal(plan) {
+  if (!walletConnected) {
+    alert("Please connect your Web3 wallet in the header first to settle L2 subscriptions.");
+    openWalletModal();
+    return;
+  }
+  
+  selectedCheckoutPlan = plan;
+  checkoutPlanName.textContent = plan === "signal" ? "Signal Pro" : "Alpha Premium";
+  checkoutPlanPrice.textContent = plan === "signal" ? "$99.00 USDC / mo" : "$499.00 USDC / mo";
+  txHashInput.value = "";
+  
+  checkoutModal.classList.remove("hidden");
+}
+
+function closeCheckoutModal() {
+  checkoutModal.classList.add("hidden");
+}
+
+function simulatePayment() {
+  const randomHex = Array.from({length: 32}, () => Math.floor(Math.random()*16).toString(16)).join("");
+  txHashInput.value = `0x${randomHex}`;
+  addLogLine(`Checkout: simulated payment signature generated.`, "system");
+}
+
+function verifyPayment() {
+  const txHash = txHashInput.value.trim();
+  if (!txHash) {
+    alert("Please enter or simulate a Base transaction hash before verifying.");
+    return;
+  }
+  
+  verifyPaymentBtn.disabled = true;
+  verifyPaymentBtn.textContent = "Verifying...";
+  addLogLine(`Checkout: auditing Base transaction hash: ${txHash}...`, "system");
+  
+  setTimeout(() => {
+    verifyPaymentBtn.disabled = false;
+    verifyPaymentBtn.textContent = "Verify Payment";
+    closeCheckoutModal();
+    
+    currentTier = selectedCheckoutPlan;
+    
+    // Apply Tier Unlocks
+    if (currentTier === "signal") {
+      addLogLine("Payment verified! Signal Pro Plan Activated.", "success");
+      document.getElementById("card-tier-free").querySelector("button").className = "btn btn-secondary btn-block mt-4 select-tier-btn";
+      document.getElementById("card-tier-free").querySelector("button").textContent = "Downgrade";
+      document.getElementById("card-tier-signal").querySelector("button").className = "btn btn-secondary btn-block mt-4 select-tier-btn";
+      document.getElementById("card-tier-signal").querySelector("button").textContent = "Active Plan";
+      
+      // Upgrade free key displayed if generated
+      if (apiKeyGenerated) {
+        apiKeyGenerated = false; // Reset to force regenerations
+        generateApiKey();
+      }
+    } else if (currentTier === "premium") {
+      addLogLine("Payment verified! Alpha Premium Plan Activated.", "success");
+      document.getElementById("card-tier-signal").querySelector("button").className = "btn btn-secondary btn-block mt-4 select-tier-btn";
+      document.getElementById("card-tier-signal").querySelector("button").textContent = "Select Plan";
+      document.getElementById("card-tier-premium").querySelector("button").className = "btn btn-secondary btn-block mt-4 select-tier-btn";
+      document.getElementById("card-tier-premium").querySelector("button").textContent = "Active Plan";
+      
+      // Unlock premium pathfinder overlay
+      routingOverlay.classList.add("hidden");
+      optPlaygroundRoutes.removeAttribute("disabled");
+      
+      if (apiKeyGenerated) {
+        apiKeyGenerated = false;
+        generateApiKey();
+      }
+    }
+    
+    alert(`Success! Payment Verified.\n\nYour subscription tier is now: ${currentTier.toUpperCase()}.\nAll associated tools and keys have been upgraded.`);
+  }, 1600);
 }
 
 // --- API PLAYGROUND HANDLER ---
@@ -453,9 +569,18 @@ function executePlaygroundRequest() {
         success: true,
         server: "Omega Protocol DeFi Intelligence",
         version: "1.0.0",
-        uptime: "142,392 seconds",
+        uptime: `${txsAudited * 2} seconds`,
         acceleration: "active (Hardware Optimized)",
-        client_tier: walletConnected ? "FREE_DEVELOPER" : "ANONYMOUS"
+        client_tier: walletConnected ? `${currentTier.toUpperCase()}_DEVELOPER` : "ANONYMOUS"
+      };
+    } else if (endpoint === "/memory") {
+      mockResponse = {
+        success: true,
+        action: "STORE",
+        agent: "Smith_01",
+        content: "Solana volatility regimes shifted from VACUUM to PRE-SHOCK.",
+        status: "COMMITTED_LTM_SUBSTRATE",
+        qdrant_storage: "./qdrant_storage"
       };
     }
     
@@ -483,6 +608,7 @@ function init() {
   
   renderNetworkRegistry();
   startNetworkPings();
+  startTelemetryClock();
   
   updateRegime();
   regimeInterval = setInterval(updateRegime, 8000);
@@ -495,6 +621,41 @@ function init() {
   calculateRouteBtn.addEventListener("click", runPathfinder);
   sendRequestBtn.addEventListener("click", executePlaygroundRequest);
   
+  // Subscription triggers
+  document.querySelectorAll(".select-tier-btn").forEach(el => {
+    el.addEventListener("click", () => {
+      const tier = el.getAttribute("data-tier");
+      if (tier === "free") {
+        if (currentTier !== "free") {
+          currentTier = "free";
+          addLogLine("Subscription downgraded to FREE tier.", "warning");
+          // Re-lock premiums
+          routingOverlay.classList.remove("hidden");
+          optPlaygroundRoutes.setAttribute("disabled", "true");
+          
+          document.getElementById("card-tier-free").querySelector("button").className = "btn btn-secondary btn-block mt-4 select-tier-btn";
+          document.getElementById("card-tier-free").querySelector("button").textContent = "Active Plan";
+          document.getElementById("card-tier-signal").querySelector("button").className = "btn btn-secondary btn-block mt-4 select-tier-btn";
+          document.getElementById("card-tier-signal").querySelector("button").textContent = "Upgrade to Pro";
+          document.getElementById("card-tier-premium").querySelector("button").className = "btn btn-secondary btn-block mt-4 select-tier-btn";
+          document.getElementById("card-tier-premium").querySelector("button").textContent = "Upgrade to Premium";
+          
+          if (apiKeyGenerated) {
+            apiKeyGenerated = false;
+            generateApiKey();
+          }
+        }
+      } else {
+        openCheckoutModal(tier);
+      }
+    });
+  });
+  
+  document.querySelector(".upgrade-premium-trigger").addEventListener("click", () => {
+    openCheckoutModal("premium");
+  });
+  
+  // Modal wallet choice
   walletOptions.forEach(opt => {
     opt.addEventListener("click", () => {
       const walletType = opt.getAttribute("data-wallet");
@@ -506,11 +667,21 @@ function init() {
     el.addEventListener("click", openWalletModal);
   });
   
-  // Close modal when clicking outside
+  // Checkout actions
+  closeCheckoutBtn.addEventListener("click", closeCheckoutModal);
+  simulatePaymentBtn.addEventListener("click", simulatePayment);
+  verifyPaymentBtn.addEventListener("click", verifyPayment);
+  
+  copyWalletBtn.addEventListener("click", () => {
+    navigator.clipboard.writeText("0x53460A8C9E4574931a98075306917E96985C1C83");
+    addLogLine("Checkout: wallet address copied to clipboard.", "success");
+    alert("Base wallet address copied to clipboard!");
+  });
+  
+  // Close modals when clicking outside
   window.addEventListener("click", (e) => {
-    if (e.target === walletModal) {
-      closeWalletModal();
-    }
+    if (e.target === walletModal) closeWalletModal();
+    if (e.target === checkoutModal) closeCheckoutModal();
   });
 }
 
