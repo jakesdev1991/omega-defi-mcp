@@ -5,8 +5,9 @@ lucide.createIcons();
 let walletConnected = false;
 let apiKeyGenerated = false;
 let currentTier = "free"; // free, signal, premium
-let realizedProfit = 46.50;
-let txsAudited = 142392;
+let realizedProfit = parseFloat(localStorage.getItem('omega_realized_profit')) || 46.50;
+let txsAudited = parseInt(localStorage.getItem('omega_txs_audited')) || 142392;
+
 
 let spreadsInterval = null;
 let regimeInterval = null;
@@ -197,6 +198,10 @@ function startNetworkPings() {
 
 // --- TELEMETRY CLOCK RUNNERS ---
 function startTelemetryClock() {
+  // Initialize values immediately from loaded state
+  headerBankroll.textContent = `$${realizedProfit.toFixed(4)}`;
+  txsAuditedEl.textContent = txsAudited.toLocaleString();
+
   // 1. Shreds throughput fluctuations
   throughputInterval = setInterval(() => {
     const baseThroughput = 5200;
@@ -209,10 +214,12 @@ function startTelemetryClock() {
     // Arbitrary micro-yield ticker to show activity
     const inc = (Math.random() * 0.04).toFixed(4);
     realizedProfit += parseFloat(inc);
+    localStorage.setItem('omega_realized_profit', realizedProfit);
     headerBankroll.textContent = `$${realizedProfit.toFixed(4)}`;
     
     // Transactions audited increments
     txsAudited += Math.random() > 0.6 ? 1 : 0;
+    localStorage.setItem('omega_txs_audited', txsAudited);
     txsAuditedEl.textContent = txsAudited.toLocaleString();
   }, 1800);
 }
