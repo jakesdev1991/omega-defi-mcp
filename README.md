@@ -1,104 +1,84 @@
-# Omega Protocol: Unified Cross-Chain DeFi Intelligence & Developer Suite
+# Omega DeFi MCP
 
-[![smithery badge](https://smithery.ai/badge/omega-mcp-server)](https://smithery.ai/server/omega-mcp-server)
+Model Context Protocol server for DeFi operations on Solana. Connects AI assistants (Claude, Cursor, etc.) to real-time DEX spreads, multi-bridge pathfinding, and market volatility forecasting via FastMCP.
 
-The Omega MCP Suite is a high-performance cross-chain DeFi intelligence and agentic tool suite designed natively for AI agents. It provides sub-slot pricing, spread detection, risk analytics, and robust memory bridges across Solana, Ethereum, Arbitrum, and Cosmos ecosystems.
+## Features
 
----
+- **Real-time DEX Spreads**: Live pricing from Jupiter, Orca, Raydium
+- **Multi-bridge Pathfinding**: Optimal routes across Wormhole, Allbridge, Portal
+- **Volatility Forecasting**: ML-powered price prediction models
+- **FastMCP Integration**: Native MCP server for AI assistant connectivity
 
-## 🛠️ The Suite Structure
-
-This repository contains both the client-facing hosted API wrappers and the local sandbox developer tools:
-
-### 1. Omega Client (`omega-client`)
-Connects to our high-frequency hosted backend for live spreads, regime metrics, and multi-hop route discoveries.
-- **Key Tools:** `get_live_spreads`, `get_cross_chain_routes`, `get_market_regime`
-
-### 2. Omega Arbitrage Elite (`omega-arbitrage`)
-High-velocity Solana arbitrage simulator.
-- **Key Tools:** `run_elite_arbitrage_cycle`
-
-### 3. Omega Analytics Pro (`omega-analytics`)
-Sovereign financial risk audits and payment verification on Base L2.
-- **Key Tools:** `omega_stability_audit`, `chaos_injection_tunnel`, `verify_onchain_payment`
-
-### 4. Omega Memory Bridge (`omega-memory`)
-Unified substrate for agentic Long-Term Memory (LTM).
-- **Key Tools:** `store_memory`, `query_past_decisions`
-
-### 5. Sovereign Gateway Proxy (`omega-proxy`)
-Provides dynamic semantic tool discovery and gateway invocation.
-- **Key Tools:** `discover_omega_tools`, `invoke_omega_suite`
-
----
-
-## 🚀 Installation & Setup
-
-Install the package and all its executable scripts directly in editable mode:
+## Quick Start
 
 ```bash
-git clone https://github.com/jakesdev1991/omega-defi-mcp.git
-cd omega-defi-mcp
+# Install dependencies
 pip install -e .
+
+# Configure
+cp .env.example .env
+# Edit .env with your RPC endpoints
+
+# Run server
+python -m src.omega_defi_mcp
 ```
 
----
+## Configuration
 
-## 🔗 Connection Guides
+Required environment variables:
 
-### 1. Claude Desktop Configuration
-To register these servers in Claude Desktop, append them to your `claude_desktop_config.json`:
+```bash
+SOLANA_RPC_URL=https://your-rpc-endpoint
+JUPITER_API_URL=https://quote-api.jup.ag/v6
+WORMHOLE_RPC=https://wormhole-rpc.example.com
+```
+
+## MCP Client Configuration
+
+Add to your MCP client config:
 
 ```json
 {
   "mcpServers": {
-    "omega-client": {
-      "command": "omega-client",
+    "omega-defi": {
+      "command": "python",
+      "args": ["-m", "src.omega_defi_mcp"],
       "env": {
-        "OMEGA_API_KEY": "your_api_key_here",
-        "OMEGA_API_URL": "https://api.omegaprotocol.io/v1"
-      }
-    },
-    "omega-memory": {
-      "command": "omega-memory",
-      "env": {
-        "OMEGA_QDRANT_STORAGE": "./qdrant_storage"
-      }
-    },
-    "omega-analytics": {
-      "command": "omega-analytics",
-      "env": {
-        "OMEGA_REVENUE_WALLET": "0x53460A8C9E4574931a98075306917E96985C1C83"
+        "SOLANA_RPC_URL": "https://..."
       }
     }
   }
 }
 ```
 
----
+## Available Tools
 
-## 🌐 Web Dashboard (Cloudflare Pages)
+- `get_dex_spreads` - Current spreads across major DEXs
+- `find_bridge_route` - Optimal cross-chain bridge paths
+- `forecast_volatility` - Short-term volatility predictions
+- `get_token_price` - Real-time token pricing
 
-We have built a premium, responsive Web Dashboard showcasing the live spreads, RCOD market regime alerts, and the multi-hop routing optimizer.
+## Development
 
-The source code for the dashboard is located in the [website/](file:///home/jake/Downloads/training/omega-defi-mcp/website/) directory.
+```bash
+# Install dev dependencies
+pip install -e .[dev]
 
-### Quick Deployment to Cloudflare Pages:
-Since the website is completely serverless and built with standard HTML5, CSS3, and JavaScript, it can be deployed to Cloudflare Pages with zero build configuration:
+# Run tests
+pytest
 
-1. Install the Wrangler CLI (if not already installed):
-   ```bash
-   npm install -g wrangler
-   ```
-2. Log in to your Cloudflare account:
-   ```bash
-   wrangler login
-   ```
-3. Deploy the `website` directory:
-   ```bash
-   wrangler pages deploy website --project-name=omega-defi-mcp
-   ```
-4. Follow the terminal prompt to create your new project. Cloudflare will provide you with a permanent public `.pages.dev` URL!
+# Lint
+ruff check src/
+mypy src/
+```
 
----
-*Powered by Agent Omega. Engineered for autonomous agency.*
+## Docker
+
+```bash
+docker build -t omega-defi-mcp .
+docker run -p 8000:8000 --env-file .env omega-defi-mcp
+```
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
