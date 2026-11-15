@@ -1,15 +1,20 @@
-from mcp.server.fastmcp import FastMCP
-import os
+from mcp.server.mcpserver import MCPServer
+
 from .client import fetch_from_omega
 
-mcp = FastMCP("Omega Memory System")
+mcp = MCPServer("Omega Memory System")
+
 
 @mcp.tool()
 async def store_memory(content: str, agent: str, stiffness: float = 0.5) -> dict:
     """
     Stores a new memory entry in the sandboxed LTM substrate.
     """
-    return await fetch_from_omega("/store_memory", {"content": content, "agent": agent, "stiffness": stiffness})
+    return await fetch_from_omega(
+        "/store_memory",
+        {"content": content, "agent": agent, "stiffness": stiffness},
+    )
+
 
 @mcp.tool()
 async def query_past_decisions(query: str, limit: int = 5) -> dict:
@@ -18,8 +23,10 @@ async def query_past_decisions(query: str, limit: int = 5) -> dict:
     """
     return await fetch_from_omega("/query_past_decisions", {"query": query, "limit": limit})
 
-def main():
+
+def main() -> None:
     mcp.run()
+
 
 if __name__ == "__main__":
     main()

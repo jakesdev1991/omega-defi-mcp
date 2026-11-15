@@ -1,20 +1,25 @@
-from mcp.server.fastmcp import FastMCP
-import httpx
 import os
+from typing import Any
+
+import httpx
+from mcp.server.mcpserver import MCPServer
 
 # The public MCP client wrapper
-mcp = FastMCP("Omega DeFi Intelligence")
+mcp = MCPServer("Omega DeFi Intelligence")
 
 # Users will provide their API key via environment variable
 API_KEY = os.environ.get("OMEGA_API_KEY", "")
 BASE_URL = os.environ.get("OMEGA_API_URL", "https://api.omegaprotocol.io/v1")
 
 
-async def fetch_from_omega(endpoint: str, params: dict | None = None):
+async def fetch_from_omega(endpoint: str, params: dict | None = None) -> dict[str, Any]:
     """Helper to route MCP requests to the central Omega Engine backend."""
     if not API_KEY:
         return {
-            "error": "Missing OMEGA_API_KEY environment variable. Please subscribe to a tier to get your key."
+            "error": (
+                "Missing OMEGA_API_KEY environment variable. "
+                "Please subscribe to a tier to get your key."
+            )
         }
 
     headers = {"Authorization": f"Bearer {API_KEY}"}
@@ -31,7 +36,8 @@ async def fetch_from_omega(endpoint: str, params: dict | None = None):
             if response.status_code == 429:
                 return {"error": "Rate limit exceeded. Upgrade your tier for higher limits."}
             response.raise_for_status()
-            return response.json()
+            data: dict[str, Any] = response.json()
+            return data
         except Exception as e:
             return {"error": f"Failed to connect to Omega API: {str(e)}"}
 
@@ -64,7 +70,7 @@ async def check_api_status() -> dict:
     return await fetch_from_omega("/status")
 
 
-def main():
+def main() -> None:
     # Runs standard stdio transport for Claude Desktop / Cursor
     mcp.run()
 
