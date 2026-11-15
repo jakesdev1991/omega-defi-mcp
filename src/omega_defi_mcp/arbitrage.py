@@ -1,8 +1,9 @@
-from mcp.server.fastmcp import FastMCP
-import os
+from mcp.server.mcpserver import MCPServer
+
 from .client import fetch_from_omega
 
-mcp = FastMCP("Omega Arbitrage Elite")
+mcp = MCPServer("Omega Arbitrage Elite")
+
 
 @mcp.tool()
 async def run_elite_arbitrage_cycle(route_id: str = "SOL-USDC-JUP") -> dict:
@@ -11,8 +12,10 @@ async def run_elite_arbitrage_cycle(route_id: str = "SOL-USDC-JUP") -> dict:
     """
     return await fetch_from_omega("/run_elite_arbitrage_cycle", {"route_id": route_id})
 
-def main():
+
+def main() -> None:
     mcp.run()
+
 
 if __name__ == "__main__":
     main()
